@@ -1,35 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import { Link } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
   });
 
-  // const [validate, setValidate] = useState({ error: false, message: "" });
-
   const handleLogin = (e) => {
     e.preventDefault();
+
+    if (loginForm.email === "") {
+      return alert("email harus diisi");
+    } else if (loginForm.password === "") {
+      return alert("password harus diisi");
+    }
+
     axios
       .post("http://localhost:7000/auth/login", loginForm)
       .then((res) => {
-        console.log(res.data.data);
         const token = res?.data?.data?.token;
         const data_user = res?.data?.data?.user;
         localStorage.setItem("token", JSON.stringify(token));
         localStorage.setItem("data_user", JSON.stringify(data_user));
 
         navigate("/");
+        Swal.fire({
+          position: "top-start",
+          icon: "success",
+          title: "Login Berhasil",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((err) => {
-        console.log(err);
-        // setValidate({ error: true, message: err.response.data.message });
+        console.error(err);
+        setError(err?.response?.data?.message);
       });
   };
 
@@ -79,6 +92,7 @@ const Login = () => {
                 placeholder="Masukkan Password"
               />
             </div>
+            {error && <p className="text-md text-red-500">{error}</p>}
             <div className="flex flex-col gap-3">
               <button
                 id="form-submit"
@@ -89,7 +103,7 @@ const Login = () => {
               </button>
               <div className="mt-10 w-full">
                 <p className="text-center">
-                  Belum Punya Akun? Silahkan Register dahulu
+                  Belum Punya Akun? Silahkan Register Dahulu
                 </p>
                 <Link to={"/register"}>
                   <button
@@ -97,7 +111,7 @@ const Login = () => {
                     type="submit"
                     className="mt-5 w-full text-center cursor-pointer text-[#6A4029] bg-[#FFBA33] px-5 py-3 text-xl font-bold rounded-md hover:bg-[#6A4029] hover:text-[#FFBA33]"
                   >
-                    Register disini
+                    Register Disini
                   </button>
                 </Link>
               </div>

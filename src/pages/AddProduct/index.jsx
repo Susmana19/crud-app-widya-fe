@@ -24,17 +24,19 @@ function AddProduct() {
       status_id: statusID,
     };
 
-    const urlProduct = "http://localhost:7000/products";
+    const urlProduct = `http://localhost:7000/products`;
+    const token = JSON.parse(localStorage.getItem("token"));
+
     axios
-      .post(urlProduct, data)
+      .post(urlProduct, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         navigate("/");
       })
       .catch((err) => {
-        setError(err.response.data.message);
-        console.log(err.response.data.message);
-        console.log(err.response.data.field);
-        console.log(err.response.data);
         setError(err.response.data);
       });
   };
@@ -45,7 +47,6 @@ function AddProduct() {
     await axios
       .get(urlCategory)
       .then((result) => {
-        console.log("dataCategory: ", result.data.data);
         setDataCategory(result.data.data);
       })
       .catch((error) => {
@@ -59,7 +60,6 @@ function AddProduct() {
     await axios
       .get(urlStatus)
       .then((result) => {
-        console.log(result.data.data);
         setDataStatus(result.data.data);
       })
       .catch((error) => {
@@ -82,9 +82,10 @@ function AddProduct() {
       <h1 className="text-center text-2xl font-bold underline underline-offset-8 decoration-double mb-5">
         TAMBAH PRODUK
       </h1>
+
       <form
         onSubmit={addProduct}
-        className="flex w-[90%] mx-auto justify-evenly"
+        className="flex w-[90%] mx-auto justify-evenly mb-10"
       >
         {/* form section */}
         <div className="w-[50%]">
@@ -95,7 +96,6 @@ function AddProduct() {
               </label>
               <input
                 onChange={(e) => {
-                  console.log(e.target.value);
                   setName(e.target.value);
                 }}
                 type="text"
@@ -113,7 +113,6 @@ function AddProduct() {
               </label>
               <input
                 onChange={(e) => {
-                  console.log(e.target.value);
                   setPrice(e.target.value);
                 }}
                 type="number"
@@ -137,7 +136,6 @@ function AddProduct() {
                 <div className="flex items-center">
                   <select
                     onChange={(e) => {
-                      console.log(e.target.value);
                       setCategoryID(e.target.value);
                     }}
                     id="product-category"
@@ -176,7 +174,6 @@ function AddProduct() {
                 <div className="flex items-center">
                   <select
                     onChange={(e) => {
-                      console.log(e.target.value);
                       setStatusID(e.target.value);
                     }}
                     id="product-status"

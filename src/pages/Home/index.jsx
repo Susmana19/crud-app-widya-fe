@@ -5,24 +5,18 @@ import Layout from "../../layouts";
 
 function Home() {
   const [products, setProducts] = useState([]);
-
-  // const getDataApi = () => {
-  //   axios
-  //   .get("http://localhost:5000/data")
-  //   .then((result) => {
-  //     console.log(result.data.data);
-  //     setDataProducts(result.data.data);
-  //   })
-  //   .catch((err) => console.log(err));
-  // }
+  const token = JSON.parse(localStorage.getItem("token"));
 
   const deleteProduct = async (id) => {
     try {
       await axios
-        .delete(`http://localhost:7000/products/${id}`)
-        .then((result) => {
+        .delete(`http://localhost:7000/products/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(() => {
           setProducts(products.filter((product) => product.id_produk !== id));
-          console.log(result);
         });
     } catch (error) {
       console.error(error);
@@ -30,15 +24,6 @@ function Home() {
   };
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("token"));
-
-    // console.log("token", token_local);
-    // console.log(typeof token);
-    // const token =
-    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJkb2RpQG1haWwuY29tIiwiaWF0IjoxNzAyODM2MDY5LCJleHAiOjE3MDI5MjI0Njl9.NS2u1Wht9DPLrJRsqJmZtTJ1HwVHyll9RISyPfhf0ZI";
-
-    // console.log("token hardcode:", token);
-
     const getProducts = async () => {
       await axios
         .get("http://localhost:7000/products", {
@@ -47,10 +32,9 @@ function Home() {
           },
         })
         .then((result) => {
-          console.log("result data,", result.data.data);
           setProducts(result.data.data);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
     };
     getProducts();
   }, []);
@@ -58,7 +42,12 @@ function Home() {
   return (
     <>
       <div className="my-10">
-        <Layout />
+        <div className="flex justify-between w-[90%] mx-auto">
+          <Layout />
+          <Link to={"/profile"}>
+            <button className="btn btn-primary">Go to Profile</button>
+          </Link>
+        </div>
         <h1 className="text-center font-bold text-2xl my-5 underline underline-offset-8 decoration-double">
           DAFTAR PRODUK
         </h1>
@@ -85,7 +74,6 @@ function Home() {
             </thead>
             <tbody>
               {/* data */}
-
               {products?.map((product, index) => {
                 const {
                   id_produk,

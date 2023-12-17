@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import { Link } from "react-router-dom";
 
@@ -12,7 +13,7 @@ const Register = () => {
     jenis_kelamin: "",
     password: "",
   });
-  // const [validate, setValidate] = useState({ error: false, message: "" });
+
   const handleRegister = (e) => {
     e.preventDefault();
 
@@ -28,13 +29,18 @@ const Register = () => {
 
     axios
       .post("http://localhost:7000/auth/register", registerForm)
-      .then((res) => {
-        console.log(res.data.data);
+      .then(() => {
         navigate("/login");
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: "Akunmu Berhasil Terdaftar",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((err) => {
-        console.log(err.message);
-        console.log(err);
+        console.error(err.message);
       });
   };
 
